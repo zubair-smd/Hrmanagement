@@ -1,0 +1,25 @@
+{% extends "employees/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<nav id="navbar">
+    <a href="{% url 'employees:employee_list' %}">Employee List</a>
+    <a href="{% url 'employees:employee_create_form' %}">Add Employee</a>
+</nav>
+
+<h1>{{ employee.first_name }} {{ employee.last_name }}</h1>
+
+<div class="employee-details">
+    <p><strong>Position:</strong> {{ employee.position }}</p>
+    <p><strong>Department:</strong> {{ employee.department }}</p>
+    <p><strong>Hire Date:</strong> {{ employee.hire_date }}</p>
+    <p><strong>Email:</strong> {{ employee.email }}</p>
+</div>
+
+<div class="action-buttons">
+    <a href="{% url 'employees:employee_update_form' employee.pk %}" class="btn">Edit</a>
+    <a href="{% url 'employees:employee_delete_confirm' employee.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'employees:employee_list' %}" class="btn">Back to list</a>
+</div>
+{% endblock %}

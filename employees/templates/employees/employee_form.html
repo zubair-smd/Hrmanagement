@@ -1,0 +1,46 @@
+{% extends 'employees/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <h2>{{ action }} Employee</h2>
+        
+        <form method="post" action="{% if action == 'Add' %}{% url 'employees:employee_create' %}{% else %}{% url 'employees:employee_update' employee.pk %}{% endif %}">
+            {% csrf_token %}
+            
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="id_name">Name</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_department">Department</label>
+                    {{ form.department }}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_position">Position</label>
+                    {{ form.position }}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_hire_date">Hire Date</label>
+                    {{ form.hire_date }}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">{{ action }} Employee</button>
+                <a href="{% url 'employees:employee_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
