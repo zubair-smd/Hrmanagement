@@ -2,45 +2,44 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class="form-card">
-        <h2>{{ action }} Employee</h2>
+<div class="form-card">
+    <h2>{{ action }} Employee</h2>
+    
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        <div class="form-field">
+            <label for="employee_id">Employee ID</label>
+            <input type="text" name="employee_id" id="employee_id" value="{{ employee.employee_id }}" required>
+        </div>
+        <div class="form-field">
+            <label for="name">Full Name</label>
+            <input type="text" name="name" id="name" value="{{ employee.name }}" required>
+        </div>
+        <div class="form-field">
+            <label for="department">Department</label>
+            <input type="text" name="department" id="department" value="{{ employee.department }}" required>
+        </div>
+        <div class="form-field">
+            <label for="position">Position</label>
+            <input type="text" name="position" id="position" value="{{ employee.position }}" required>
+        </div>
+        <div class="form-field">
+            <label for="salary">Salary</label>
+            <input type="number" name="salary" id="salary" value="{{ employee.salary }}" required>
+        </div>
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" value="{{ employee.email }}" required>
+        </div>
+        <div class="form-field">
+            <label for="hire_date">Hire Date</label>
+            <input type="date" name="hire_date" id="hire_date" value="{{ employee.hire_date|date:'Y-m-d' }}" required>
+        </div>
         
-        <form method="post" action="{% if action == 'Add' %}{% url 'employees:employee_create' %}{% else %}{% url 'employees:employee_update' employee.pk %}{% endif %}">
-            {% csrf_token %}
-            
-            <div class="form-grid">
-                <div class="form-field">
-                    <label for="id_name">Name</label>
-                    {{ form.name }}
-                </div>
-
-                <div class="form-field">
-                    <label for="id_department">Department</label>
-                    {{ form.department }}
-                </div>
-
-                <div class="form-field">
-                    <label for="id_position">Position</label>
-                    {{ form.position }}
-                </div>
-
-                <div class="form-field">
-                    <label for="id_hire_date">Hire Date</label>
-                    {{ form.hire_date }}
-                </div>
-
-                <div class="form-field">
-                    <label for="id_email">Email</label>
-                    {{ form.email }}
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">{{ action }} Employee</button>
-                <a href="{% url 'employees:employee_list' %}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{{ action }}</button>
+            <a href="{% url 'employees:employee_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
 </div>
 {% endblock %}

@@ -2,24 +2,30 @@
 {% load static %}
 
 {% block content %}
-
-<nav id="navbar">
-    <a href="{% url 'employees:employee_list' %}">Employee List</a>
-    <a href="{% url 'employees:employee_create_form' %}">Add Employee</a>
-</nav>
-
-<h1>{{ employee.first_name }} {{ employee.last_name }}</h1>
-
-<div class="employee-details">
-    <p><strong>Position:</strong> {{ employee.position }}</p>
-    <p><strong>Department:</strong> {{ employee.department }}</p>
-    <p><strong>Hire Date:</strong> {{ employee.hire_date }}</p>
-    <p><strong>Email:</strong> {{ employee.email }}</p>
+<div class="header">
+    <div class="header-left">
+        <h1>Employee Details</h1>
+    </div>
+    <div class="header-right">
+        <a href="{% url 'employees:employee_list' %}" class="btn-secondary">Back to List</a>
+    </div>
 </div>
 
-<div class="action-buttons">
-    <a href="{% url 'employees:employee_update_form' employee.pk %}" class="btn">Edit</a>
-    <a href="{% url 'employees:employee_delete_confirm' employee.pk %}" class="btn btn-danger">Delete</a>
-    <a href="{% url 'employees:employee_list' %}" class="btn">Back to list</a>
+<div class="detail-card">
+    <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+    
+    <div class="employee-details">
+        <p><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
+        <p><strong>Position:</strong> {{ employee.position }}</p>
+        <p><strong>Department:</strong> {{ employee.department }}</p>
+        <p><strong>Salary:</strong> ${{ employee.salary|floatformat:2 }}</p>
+        <p><strong>Hire Date:</strong> {{ employee.hire_date|date:"F d, Y" }}</p>
+        <p><strong>Email:</strong> {{ employee.email }}</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{% url 'employees:employee_update_form' employee.pk %}" class="btn btn-edit">Edit</a>
+        <a href="{% url 'employees:employee_delete_confirm' employee.pk %}" class="btn btn-danger">Delete</a>
+    </div>
 </div>
 {% endblock %}
