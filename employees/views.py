@@ -2,13 +2,12 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
+from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from .models import Employee, UserProfile
 from .forms import EmployeeForm, SignUpForm
-from .constants import EmployeeConstants as EC
 import logging
 
 logger = logging.getLogger(__name__)
@@ -77,7 +76,6 @@ def employee_list(request):
         try:
             user_profile = UserProfile.objects.get(user=request.user)
         except UserProfile.DoesNotExist:
-            # Create a default UserProfile if it doesn't exist
             user_profile = UserProfile.objects.create(
                 user=request.user,
                 name=request.user.username,
@@ -95,43 +93,40 @@ def employee_list(request):
         return redirect('employees:login')
 
 @login_required
-@require_GET
 def employee_detail(request, pk):
     """View to display detailed employee information."""
     try:
         employee = get_object_or_404(Employee, pk=pk)
+        user_profile = get_object_or_404(UserProfile, user=request.user)
         return render(request, 'employees/employee_detail.html', {
             'employee': employee,
-            'user_profile': UserProfile.objects.get(user=request.user)
+            'user_profile': user_profile
         })
-    except Employee.DoesNotExist:
-        messages.error(request, 'Employee not found.')
-        return redirect('employees:employee_list')
     except Exception as e:
-        logger.error(f"Error displaying employee details for {pk}: {str(e)}")
+        logger.error(f"Error displaying employee details: {str(e)}")
         messages.error(request, 'Error displaying employee details.')
         return redirect('employees:employee_list')
 
 @login_required
-@require_GET
 def employee_create_form(request):
-    """View to display the employee creation form."""
+    """View to display employee creation form."""
     try:
         form = EmployeeForm()
+        user_profile = get_object_or_404(UserProfile, user=request.user)
         return render(request, 'employees/employee_form.html', {
             'form': form,
             'action': 'Add',
-            'user_profile': UserProfile.objects.get(user=request.user)
+            'user_profile': user_profile
         })
     except Exception as e:
-        logger.error(f"Error displaying employee creation form: {str(e)}")
-        messages.error(request, 'Error displaying employee creation form.')
+        logger.error(f"Error displaying create form: {str(e)}")
+        messages.error(request, 'Error displaying create form.')
         return redirect('employees:employee_list')
 
 @login_required
 @require_POST
 def employee_create(request):
-    """View to handle employee creation form submission."""
+    """View to handle employee creation."""
     try:
         form = EmployeeForm(request.POST)
         if form.is_valid():
@@ -142,11 +137,11 @@ def employee_create(request):
                 messages.success(request, 'Employee created successfully.')
                 return redirect('employees:employee_list')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            user_profile = get_object_or_404(UserProfile, user=request.user)
             return render(request, 'employees/employee_form.html', {
                 'form': form,
                 'action': 'Add',
-                'user_profile': UserProfile.objects.get(user=request.user)
+                'user_profile': user_profile
             })
     except Exception as e:
         logger.error(f"Error creating employee: {str(e)}")
@@ -154,30 +149,27 @@ def employee_create(request):
         return redirect('employees:employee_list')
 
 @login_required
-@require_GET
 def employee_update_form(request, pk):
-    """View to display the employee update form."""
+    """View to display employee update form."""
     try:
         employee = get_object_or_404(Employee, pk=pk)
         form = EmployeeForm(instance=employee)
+        user_profile = get_object_or_404(UserProfile, user=request.user)
         return render(request, 'employees/employee_form.html', {
             'form': form,
             'employee': employee,
             'action': 'Update',
-            'user_profile': UserProfile.objects.get(user=request.user)
+            'user_profile': user_profile
         })
-    except Employee.DoesNotExist:
-        messages.error(request, 'Employee not found.')
-        return redirect('employees:employee_list')
     except Exception as e:
-        logger.error(f"Error displaying update form for employee {pk}: {str(e)}")
+        logger.error(f"Error displaying update form: {str(e)}")
         messages.error(request, 'Error displaying update form.')
         return redirect('employees:employee_list')
 
 @login_required
 @require_POST
 def employee_update(request, pk):
-    """View to handle employee update form submission."""
+    """View to handle employee update."""
     try:
         employee = get_object_or_404(Employee, pk=pk)
         form = EmployeeForm(request.POST, instance=employee)
@@ -189,36 +181,30 @@ def employee_update(request, pk):
                 messages.success(request, 'Employee updated successfully.')
                 return redirect('employees:employee_list')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            user_profile = get_object_or_404(UserProfile, user=request.user)
             return render(request, 'employees/employee_form.html', {
                 'form': form,
                 'employee': employee,
                 'action': 'Update',
-                'user_profile': UserProfile.objects.get(user=request.user)
+                'user_profile': user_profile
             })
-    except Employee.DoesNotExist:
-        messages.error(request, 'Employee not found.')
-        return redirect('employees:employee_list')
     except Exception as e:
-        logger.error(f"Error updating employee {pk}: {str(e)}")
+        logger.error(f"Error updating employee: {str(e)}")
         messages.error(request, 'Error updating employee.')
         return redirect('employees:employee_list')
 
 @login_required
-@require_GET
 def employee_delete_confirm(request, pk):
     """View to display delete confirmation page."""
     try:
         employee = get_object_or_404(Employee, pk=pk)
+        user_profile = get_object_or_404(UserProfile, user=request.user)
         return render(request, 'employees/employee_confirm_delete.html', {
             'employee': employee,
-            'user_profile': UserProfile.objects.get(user=request.user)
+            'user_profile': user_profile
         })
-    except Employee.DoesNotExist:
-        messages.error(request, 'Employee not found.')
-        return redirect('employees:employee_list')
     except Exception as e:
-        logger.error(f"Error displaying delete confirmation for employee {pk}: {str(e)}")
+        logger.error(f"Error displaying delete confirmation: {str(e)}")
         messages.error(request, 'Error displaying delete confirmation.')
         return redirect('employees:employee_list')
 
@@ -232,10 +218,7 @@ def employee_delete(request, pk):
             employee.delete()
             messages.success(request, 'Employee deleted successfully.')
             return redirect('employees:employee_list')
-    except Employee.DoesNotExist:
-        messages.error(request, 'Employee not found.')
-        return redirect('employees:employee_list')
     except Exception as e:
-        logger.error(f"Error deleting employee {pk}: {str(e)}")
+        logger.error(f"Error deleting employee: {str(e)}")
         messages.error(request, 'Error deleting employee.')
         return redirect('employees:employee_list')

@@ -5,39 +5,66 @@
 <div class="form-card">
     <h2>{{ action }} Employee</h2>
     
-    <form method="post" class="form-grid">
+    <form method="post" action="{% if action == 'Add' %}{% url 'employees:employee_create' %}{% else %}{% url 'employees:employee_update' employee.pk %}{% endif %}" class="form-grid">
         {% csrf_token %}
         <div class="form-field">
             <label for="employee_id">Employee ID</label>
-            <input type="text" name="employee_id" id="employee_id" value="{{ employee.employee_id }}" required>
+            <input type="text" name="employee_id" id="employee_id" value="{{ form.employee_id.value|default:'' }}" required>
+            {% if form.employee_id.errors %}
+            <span class="error">{{ form.employee_id.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="name">Full Name</label>
-            <input type="text" name="name" id="name" value="{{ employee.name }}" required>
+            <input type="text" name="name" id="name" value="{{ form.name.value|default:'' }}" required>
+            {% if form.name.errors %}
+            <span class="error">{{ form.name.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="department">Department</label>
-            <input type="text" name="department" id="department" value="{{ employee.department }}" required>
+            <input type="text" name="department" id="department" value="{{ form.department.value|default:'' }}" required>
+            {% if form.department.errors %}
+            <span class="error">{{ form.department.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="position">Position</label>
-            <input type="text" name="position" id="position" value="{{ employee.position }}" required>
+            <input type="text" name="position" id="position" value="{{ form.position.value|default:'' }}" required>
+            {% if form.position.errors %}
+            <span class="error">{{ form.position.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="salary">Salary</label>
-            <input type="number" name="salary" id="salary" value="{{ employee.salary }}" required>
+            <input type="number" name="salary" id="salary" step="0.01" value="{{ form.salary.value|default:'' }}" required>
+            {% if form.salary.errors %}
+            <span class="error">{{ form.salary.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" value="{{ employee.email }}" required>
+            <input type="email" name="email" id="email" value="{{ form.email.value|default:'' }}" required>
+            {% if form.email.errors %}
+            <span class="error">{{ form.email.errors.0 }}</span>
+            {% endif %}
         </div>
+        
         <div class="form-field">
             <label for="hire_date">Hire Date</label>
-            <input type="date" name="hire_date" id="hire_date" value="{{ employee.hire_date|date:'Y-m-d' }}" required>
+            <input type="date" name="hire_date" id="hire_date" value="{{ form.hire_date.value|date:'Y-m-d'|default:'' }}" required>
+            {% if form.hire_date.errors %}
+            <span class="error">{{ form.hire_date.errors.0 }}</span>
+            {% endif %}
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">{{ action }}</button>
+            <button type="submit" class="btn btn-primary">{{ action }} Employee</button>
             <a href="{% url 'employees:employee_list' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
